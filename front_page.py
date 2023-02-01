@@ -2,6 +2,7 @@ import sys
 import os
 import random
 from tkinter import *
+from subprocess import call
 
 
 def sing_in():
@@ -9,7 +10,10 @@ def sing_in():
         session_id_info = session_id.get()
         print(session_id_info)
         # do some shit to send it to DB and open an exec file
-        os.system("UI.py")
+        # add fault handling
+        portal.destroy()
+        # call the other file with the reactions
+        call(["python3", "UI.py"])
 
     # open a seperate toplevel window
     signin_screen = Toplevel(portal)
