@@ -2,18 +2,24 @@ import sys
 import os
 import random
 from tkinter import *
+from tkinter import messagebox
 from subprocess import call
 
 
 def sing_in():
     def set_id():
+        input_file = open("group_codes.txt")
+        Codes = input_file.readlines()
         session_id_info = session_id.get()
-        print(session_id_info)
-        # do some shit to send it to DB and open an exec file
-        # add fault handling
-        portal.destroy()
-        # call the other file with the reactions
-        call(["python3", "UI.py"])
+        for code in Codes:
+            if session_id_info in code:
+                print(session_id_info)
+                # do some shit to send it to DB and open an exec file
+                # add fault handling
+                portal.destroy()
+                # call the other file with the reactions
+                call(["python3", "UI.py"])
+        messagebox.showerror("Login Error", "Group ID does not exist")
 
     # open a seperate toplevel window
     signin_screen = Toplevel(portal)
