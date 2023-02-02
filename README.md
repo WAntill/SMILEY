@@ -2,6 +2,10 @@
 University Project to create a lecturer feedback application and data analysis 
 
 Core Requirements:
+- [x] Login Page
+- [x] Correct session ID handling
+- [x] Reaction Page
+- [x] Button Scaling/composition
 - [ ] Error handling for login page
 - [ ] Connect to DB
 - [ ] Insert into DB
