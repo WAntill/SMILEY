@@ -8,8 +8,11 @@ from subprocess import call
 
 def sing_in():
     def set_id():
+        # for now we check a txt file, change this to check DB
         input_file = open("group_codes.txt")
         Codes = input_file.readlines()
+
+        # get the value of the global variable
         session_id_info = session_id.get()
         for code in Codes:
             if session_id_info in code:
