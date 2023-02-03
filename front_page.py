@@ -27,9 +27,8 @@ def set_id():
             call(["python3", "UI.py"])
     messagebox.showerror("Login Error", "Group ID does not exist")
 
-
+# backspace button logic
 def backspace_press():
-    # backspace button logic
     global session_id_text
     # if the text box is not empty delete the character that appears on the
     # far right, and assign it to the session ID variable, otherwise do nothing
