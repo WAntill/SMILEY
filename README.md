@@ -6,7 +6,7 @@ Core Requirements:
 - [x] Correct session ID handling
 - [x] Reaction Page
 - [x] Button Scaling/composition
-- [ ] Error handling for login page
+- [x] Error handling for login page
 - [ ] Connect to DB
 - [ ] Insert into DB
 - [ ] Take login information from a database
