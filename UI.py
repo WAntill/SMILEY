@@ -6,7 +6,7 @@ from PIL import Image,ImageTk
 from subprocess import call
 
 root = tk.Tk()
-root.geometry("500x500")
+root.attributes('-fullscreen', True)
 root.title("Feedback Machine")
 root.config(bg="black")
 
@@ -39,14 +39,15 @@ right_frame = tk.Frame(root, bg="grey")
 right_frame.grid(row=1, column=4, padx=10, pady=10, sticky="nsew")
 
 bottom_frame = tk.Frame(root, bg="grey")
-bottom_frame.grid(row=2, column=1, columnspan=3, padx=10, pady=10, sticky="nsew")
+bottom_frame.grid(row=2, column=2, padx=10, pady=10, sticky="nsew")
 
-image_excellent = PhotoImage(file="Ecstatic Face.png")
-image_good = PhotoImage(file="Happy Face.png")
-image_okay = PhotoImage(file="OK Face.png")
-image_bad = PhotoImage(file="Not Happy Face.png")
-image_very_bad = PhotoImage(file="Angry Face.png")
-image_hallam_logo = PhotoImage(file="Project Logo.png")
+image_excellent = PhotoImage(file="images/Ecstatic Face.png")
+image_good = PhotoImage(file="images/Happy Face.png")
+image_okay = PhotoImage(file="images/OK Face.png")
+image_bad = PhotoImage(file="images/Not Happy Face.png")
+image_very_bad = PhotoImage(file="images/Angry Face.png")
+image_hallam_logo = PhotoImage(file="images/Project Logo.png")
+image_back_button = PhotoImage(file="images/Back_To_Login.png")
 
 label_top = Label(title_frame, bg="black", image=image_hallam_logo, padx=10, pady=10)
 label_top.pack(fill="y", expand=True)
@@ -70,22 +71,22 @@ def BackToLogin():
     root.destroy()
     call(["python3", "front_page.py"])
 
-button_excellent = tk.Button(left_frame, text="Excellent", bg="green", image=image_excellent, command=RegisterResponseExcellent)
+button_excellent = tk.Button(left_frame, text="Excellent", bg="green", activebackground="black", image=image_excellent, command=RegisterResponseExcellent)
 button_excellent.pack(fill=tk.BOTH, expand=True)
 
-button_good = tk.Button(left_middle_frame, text="Good", bg="lightgreen", image=image_good , command=RegisterResponseGood)
+button_good = tk.Button(left_middle_frame, text="Good", bg="lightgreen", activebackground="black", image=image_good , command=RegisterResponseGood)
 button_good.pack(fill=tk.BOTH, expand=True)
 
-button_straight = tk.Button(middle_frame, text="Okay", bg="yellow", image=image_okay, command=RegisterResponseOkay)
+button_straight = tk.Button(middle_frame, text="Okay", bg="yellow", activebackground="black", image=image_okay, command=RegisterResponseOkay)
 button_straight.pack(fill=tk.BOTH, expand=True)
 
-button_bad = tk.Button(right_middle_frame, text="Bad", bg="orange", image=image_bad , command=RegisterResponseBad)
+button_bad = tk.Button(right_middle_frame, text="Bad", bg="orange", activebackground="black", image=image_bad , command=RegisterResponseBad)
 button_bad.pack(fill=tk.BOTH, expand=True)
 
-button_very_bad = tk.Button(right_frame, text="Very Bad", bg="red", image=image_very_bad , command=RegisterResponseBad)
+button_very_bad = tk.Button(right_frame, text="Very Bad", bg="red", activebackground="black", image=image_very_bad , command=RegisterResponseBad)
 button_very_bad.pack(fill=tk.BOTH, expand=True)
 
-button_back = tk.Button(bottom_frame, text="Back to Login", font=("Calibri", 45), command=BackToLogin)
+button_back = tk.Button(bottom_frame, bg="black", activebackground="black", image=image_back_button, borderwidth=0, command=BackToLogin)
 button_back.pack(fill=tk.BOTH, expand=TRUE)
 
 root.mainloop()
