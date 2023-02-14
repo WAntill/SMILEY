@@ -3,8 +3,11 @@ import random
 from tkinter import *
 import tkinter as tk
 from tkinter import messagebox
-from PIL import Image,ImageTk
+from PIL import Image, ImageTk
 from subprocess import call
+
+import pymysql.cursors
+
 
 # makes sure the text box is empty at all times
 session_id_text = ""
@@ -13,18 +16,28 @@ session_id_text = ""
 def set_id():
     global session_id_text
     # for now we check a txt file, change this to check DB
-    input_file = open("group_codes.txt")
-    Codes = input_file.readlines()
+    #input_file = open("group_codes.txt")
+    #Codes = input_file.readlines()
 
     # get the value of the global variable
     session_id_info = session_id.get()
-    for code in Codes:
-        #strip the code of the "\n"
-        code = code.strip("\n")
-        if session_id_info == code:
-            session_id_text = ""
-            session_id.set(session_id_text)            
-            main_frame.tkraise()
+    connection = pymysql.connect(host="82.33.252.194", port=3306, user="dbadmin", password="Rx2G7HuCzez8yRdcMcynVF1P")
+    cursor = connection.cursor()
+
+    sql = "SELECT * FROM db.roomcodes WHERE roomcode = %s"
+    cursor.execute(sql, (session_id_info))
+    row = cursor.fetchone()
+
+    if row:
+        print("value found")
+        session_id_text = ""
+        session_id.set(session_id_text)
+        main_frame.tkraise()
+
+    else:
+        print("value not found")
+        connection.close()
+
 
 # backspace button logic
 def backspace_press():
@@ -38,12 +51,31 @@ def backspace_press():
     else:
         pass
 
-
 # logic for when a key is pressed
 def button_press(the_button):
     global session_id_text
     session_id_text = session_id_text + str(the_button)
     session_id.set(session_id_text)
+
+def RegisterResponseExcellent():
+
+    print("Glad to hear it was excellent")
+
+
+def RegisterResponseGood():
+    print("Thanks for the feedback")
+
+def RegisterResponseOkay():
+    print("Thanks for the repsonse")
+
+def RegisterResponseBad():
+    print("Thanks for the feedback")
+
+def RegisterResponseVeryBad():
+    print("Sorry to hear it was bad")
+
+def BackToLogin():
+    front_frame.tkraise()
 
 
 root = tk.Tk()
@@ -190,23 +222,6 @@ image_nine = PhotoImage(file="images/nine.png")
 label_top = Label(title_frame, bg="black", image=image_hallam_logo, padx=10, pady=10)
 label_top.pack(fill="y", expand=True)
 
-def RegisterResponseExcellent():
-    print("Glad to hear it was excellent")
-
-def RegisterResponseGood():
-    print("Thanks for the feedback")
-
-def RegisterResponseOkay():
-    print("Thanks for the repsonse")
-
-def RegisterResponseBad():
-    print("Thanks for the feedback")
-
-def RegisterResponseVeryBad():
-    print("Sorry to hear it was bad")
-
-def BackToLogin():
-    front_frame.tkraise()
 
 button_excellent = tk.Button(left_frame, text="Excellent", bg="green", activebackground="black", image=image_excellent, command=RegisterResponseExcellent)
 button_excellent.pack(fill=tk.BOTH, expand=True)
@@ -224,8 +239,9 @@ button_very_bad = tk.Button(right_frame, text="Very Bad", bg="red", activebackgr
 button_very_bad.pack(fill=tk.BOTH, expand=True)
 
 button_back = tk.Button(bottom_frame, bg="black", activebackground="black", image=image_back_button, borderwidth=0, command=BackToLogin)
-button_back.pack(fill=tk.BOTH, expand=TRUE)# the textbox for the session ID - this is so broken, needs some more looking into
+button_back.pack(fill=tk.BOTH, expand=TRUE)
 
+# the textbox for the session ID - this is so broken, needs some more looking into
 session_id_textbox = Label(
     front_frame,
     textvariable=session_id,
