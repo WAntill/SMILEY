@@ -7,8 +7,7 @@ Core Requirements:
 - [x] Reaction Page
 - [x] Button Scaling/composition
 - [x] Error handling for login page
-- [ ] Connect to DB
-- [ ] Insert into DB
-- [ ] Take login information from a database
-- [ ] Create a new table whenever a key is entered
+- [x] Connect to DB
+- [x] Take login information from a database
+- [ ] Create a new row whenever a key is entered
 - [ ] Add a visualisation on demand capability (pandas, plotly, etc.)
