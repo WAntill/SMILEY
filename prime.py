@@ -40,11 +40,11 @@ def set_id():
         print(curr_date)
 
         #insert initial row
-        #sql = "INSERT INTO db.feedback (roomCode, curr_date, veryUnsatisfied, unsatisfied, neutral, satisfied, verySatisfied) VALUES (%s, %s, 0, 0, 0, 0, 0)"
-        #data = (session_id_text, curr_date)
-
-        #cursor.execute(sql, data)
-        cursor.execute("INSERT INTO db.feedback (roomCode) VALUES (1234)")
+        sql = "INSERT INTO db.feedback (roomCode, curr_date, veryUnsatisfied, unsatisfied, neutral, satisfied, verySatisfied) VALUES (%s, %s, 0, 0, 0, 0, 0)"
+        data = (session_id_text, curr_date)
+        cursor.execute(sql, data)
+        connection.commit()
+        #cursor.execute("INSERT INTO db.feedback (roomCode) VALUES (1234)")
 
         
         #get the index number
@@ -85,27 +85,32 @@ def RegisterResponseExcellent():
     sql = ("UPDATE db.feedback SET verySatisfied = verySatisfied + 1  WHERE sessionID = %s;")
     print(roomcode)
     cursor.execute(sql, roomcode)
+    connection.commit()
     print("Glad to hear it was excellent")
 
 
 def RegisterResponseGood():
     sql = ("UPDATE db.feedback SET satisfied = satisfied + 1  WHERE sessionID = %s;")
     cursor.execute(sql, roomcode)
+    connection.commit()
     print("Thanks for the feedback")
 
 def RegisterResponseOkay():
     sql = ("UPDATE db.feedback SET neutral = neutral + 1  WHERE sessionID = %s;")
     cursor.execute(sql, roomcode)
+    connection.commit()
     print("Thanks for the feedback")
 
 def RegisterResponseBad():
     sql = ("UPDATE db.feedback SET unsatisfied = unsatisfied + 1  WHERE sessionID = %s;")
     cursor.execute(sql, roomcode)
+    connection.commit()
     print("Thanks for the feedback")
 
 def RegisterResponseVeryBad():
     sql = ("UPDATE db.feedback SET veryUnsatisfied = veryUnsatisfied + 1  WHERE sessionID = %s;")
     cursor.execute(sql, roomcode)  
+    connection.commit()
     print("Sorry to hear it was bad")
 
 def BackToLogin():
