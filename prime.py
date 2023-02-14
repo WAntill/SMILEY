@@ -5,16 +5,20 @@ import tkinter as tk
 from tkinter import messagebox
 from PIL import Image, ImageTk
 from subprocess import call
+import time
+
 
 import pymysql.cursors
 
 
 # makes sure the text box is empty at all times
 session_id_text = ""
+roomcode = ""
 
-# def sing_in():
 def set_id():
     global session_id_text
+    global cursor 
+    global roomcode
     # for now we check a txt file, change this to check DB
     #input_file = open("group_codes.txt")
     #Codes = input_file.readlines()
@@ -27,13 +31,33 @@ def set_id():
     sql = "SELECT * FROM db.roomcodes WHERE roomcode = %s"
     cursor.execute(sql, (session_id_info))
     row = cursor.fetchone()
-
+    
     if row:
         print("value found")
+        
+        #get current time
+        curr_date = time.strftime('%Y-%m-%d %H:%M:%S')
+        print(curr_date)
+
+        #insert initial row
+        #sql = "INSERT INTO db.feedback (roomCode, curr_date, veryUnsatisfied, unsatisfied, neutral, satisfied, verySatisfied) VALUES (%s, %s, 0, 0, 0, 0, 0)"
+        #data = (session_id_text, curr_date)
+
+        #cursor.execute(sql, data)
+        cursor.execute("INSERT INTO db.feedback (roomCode) VALUES (1234)")
+
+        
+        #get the index number
+        sql = "SELECT sessionID FROM db.feedback WHERE roomCode = %s ORDER BY sessionID DESC LIMIT 1;"
+        cursor.execute(sql, session_id_text)
+        temp = cursor.fetchone()
+        print(temp)
+        roomcode = temp[0]
+
+        #raise the next window
         session_id_text = ""
         session_id.set(session_id_text)
         main_frame.tkraise()
-
     else:
         print("value not found")
         connection.close()
@@ -58,20 +82,30 @@ def button_press(the_button):
     session_id.set(session_id_text)
 
 def RegisterResponseExcellent():
-
+    sql = ("UPDATE db.feedback SET verySatisfied = verySatisfied + 1  WHERE sessionID = %s;")
+    print(roomcode)
+    cursor.execute(sql, roomcode)
     print("Glad to hear it was excellent")
 
 
 def RegisterResponseGood():
+    sql = ("UPDATE db.feedback SET satisfied = satisfied + 1  WHERE sessionID = %s;")
+    cursor.execute(sql, roomcode)
     print("Thanks for the feedback")
 
 def RegisterResponseOkay():
-    print("Thanks for the repsonse")
+    sql = ("UPDATE db.feedback SET neutral = neutral + 1  WHERE sessionID = %s;")
+    cursor.execute(sql, roomcode)
+    print("Thanks for the feedback")
 
 def RegisterResponseBad():
+    sql = ("UPDATE db.feedback SET unsatisfied = unsatisfied + 1  WHERE sessionID = %s;")
+    cursor.execute(sql, roomcode)
     print("Thanks for the feedback")
 
 def RegisterResponseVeryBad():
+    sql = ("UPDATE db.feedback SET veryUnsatisfied = veryUnsatisfied + 1  WHERE sessionID = %s;")
+    cursor.execute(sql, roomcode)  
     print("Sorry to hear it was bad")
 
 def BackToLogin():
@@ -235,7 +269,7 @@ button_straight.pack(fill=tk.BOTH, expand=True)
 button_bad = tk.Button(right_middle_frame, text="Bad", bg="orange", activebackground="black", image=image_bad , command=RegisterResponseBad)
 button_bad.pack(fill=tk.BOTH, expand=True)
 
-button_very_bad = tk.Button(right_frame, text="Very Bad", bg="red", activebackground="black", image=image_very_bad , command=RegisterResponseBad)
+button_very_bad = tk.Button(right_frame, text="Very Bad", bg="red", activebackground="black", image=image_very_bad , command=RegisterResponseVeryBad)
 button_very_bad.pack(fill=tk.BOTH, expand=True)
 
 button_back = tk.Button(bottom_frame, bg="black", activebackground="black", image=image_back_button, borderwidth=0, command=BackToLogin)
