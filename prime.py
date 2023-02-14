@@ -19,6 +19,7 @@ def set_id():
     global session_id_text
     global cursor 
     global roomcode
+    global connection
     # for now we check a txt file, change this to check DB
     #input_file = open("group_codes.txt")
     #Codes = input_file.readlines()
@@ -45,7 +46,6 @@ def set_id():
         cursor.execute(sql, data)
         connection.commit()
         #cursor.execute("INSERT INTO db.feedback (roomCode) VALUES (1234)")
-
         
         #get the index number
         sql = "SELECT sessionID FROM db.feedback WHERE roomCode = %s ORDER BY sessionID DESC LIMIT 1;"
