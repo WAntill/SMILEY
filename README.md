@@ -9,5 +9,6 @@ Core Requirements:
 - [x] Error handling for login page
 - [x] Connect to DB
 - [x] Take login information from a database
-- [ ] Create a new row whenever a key is entered
+- [x] Create a new row whenever a key is entered
 - [ ] Add a visualisation on demand capability (pandas, plotly, etc.)
+- [ ] Fix vulnerabilities
