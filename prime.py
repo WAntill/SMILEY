@@ -20,14 +20,13 @@ def set_id():
     global cursor 
     global roomcode
     global connection
-    # for now we check a txt file, change this to check DB
-    #input_file = open("group_codes.txt")
-    #Codes = input_file.readlines()
+
 
     # get the value of the global variable
     session_id_info = session_id.get()
     connection = pymysql.connect(host="82.33.252.194", port=3306, user="dbadmin", password="Rx2G7HuCzez8yRdcMcynVF1P")
     cursor = connection.cursor()
+
 
     sql = "SELECT * FROM db.roomcodes WHERE roomcode = %s"
     cursor.execute(sql, (session_id_info))
@@ -39,13 +38,13 @@ def set_id():
         #get current time
         curr_date = time.strftime('%Y-%m-%d %H:%M:%S')
         print(curr_date)
-
+    
         #insert initial row
         sql = "INSERT INTO db.feedback (roomCode, curr_date, veryUnsatisfied, unsatisfied, neutral, satisfied, verySatisfied) VALUES (%s, %s, 0, 0, 0, 0, 0)"
         data = (session_id_text, curr_date)
         cursor.execute(sql, data)
+        #commit the changes to the DB
         connection.commit()
-        #cursor.execute("INSERT INTO db.feedback (roomCode) VALUES (1234)")
         
         #get the index number
         sql = "SELECT sessionID FROM db.feedback WHERE roomCode = %s ORDER BY sessionID DESC LIMIT 1;"
@@ -60,6 +59,7 @@ def set_id():
         main_frame.tkraise()
     else:
         print("value not found")
+        #if key does not exist
         connection.close()
 
 
