@@ -20,7 +20,7 @@ def set_id():
     global cursor 
     global roomcode
     global connection
-
+    front_frame.tkraise()
 
     # get the value of the global variable
     session_id_info = session_id.get()
@@ -135,11 +135,22 @@ Grid.columnconfigure(root, 4, weight=1)
 # set session ID text variable
 session_id = StringVar()
 
+#intitialise each of the frames
 main_frame = tk.Frame(root, bg="black")
 main_frame.grid(row=0, rowspan=3, column=0, columnspan=5, padx=10, pady=10, sticky="nsew")
 
 front_frame = tk.Frame(root, bg="black")
 front_frame.grid(row=0, rowspan=3, column=0, columnspan=5, padx=10, pady=10, sticky="nsew")
+
+login_frame = tk.Frame(root, bg="Black")
+login_frame.grid(row=0, rowspan=3, column=0, columnspan=5, padx=10, pady=10, sticky="nsew")
+
+button_enter_roomcode = tk.Button(login_frame, text="Enter Roomcode", bg="green", activebackground="black", command=set_id)
+button_enter_roomcode.pack(fill=tk.BOTH, expand=True)
+
+button_enter_graphing = tk.Button(login_frame, text="Enter Graphing Mode", bg="green", activebackground="black", command=set_id)
+button_enter_graphing.pack(fill=tk.BOTH, expand=True)
+
 
 Grid.rowconfigure(front_frame, 0, weight=1)
 Grid.rowconfigure(front_frame, 1, weight=1)
@@ -281,15 +292,7 @@ button_back = tk.Button(bottom_frame, bg="black", activebackground="black", imag
 button_back.pack(fill=tk.BOTH, expand=TRUE)
 
 # the textbox for the session ID - this is so broken, needs some more looking into
-session_id_textbox = Label(
-    front_frame,
-    textvariable=session_id,
-    borderwidth=3,
-    relief="groove",
-    font=("Amasis MT Std Black", 42),
-    bg="black",
-    fg="white"
-)
+session_id_textbox = Label(front_frame, textvariable=session_id, borderwidth=3, relief="groove", font=("Amasis MT Std Black", 42), bg="black", fg="white")
 session_id_textbox.grid(row=1, rowspan=2, column=1, columnspan=3, padx=10, pady=10, sticky="nsew")
 
 # login button - need to replace with some art rather than mess with fonts
