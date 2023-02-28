@@ -2,7 +2,7 @@ import sys
 import random
 from tkinter import *
 import tkinter as tk
-from tkinter import messagebox
+from tkinter import messagebox, ttk
 from PIL import Image, ImageTk
 from subprocess import call
 import time
@@ -15,52 +15,66 @@ import pymysql.cursors
 session_id_text = ""
 roomcode = ""
 
+
 def set_id():
     global session_id_text
-    global cursor 
+    global cursor
     global roomcode
     global connection
 
-
     # get the value of the global variable
     session_id_info = session_id.get()
-    connection = pymysql.connect(host="82.33.252.194", port=3306, user="dbadmin", password="Rx2G7HuCzez8yRdcMcynVF1P")
+    connection = pymysql.connect(
+        host="82.33.252.194",
+        port=3306,
+        user="dbadmin",
+        password="Rx2G7HuCzez8yRdcMcynVF1P",
+    )
     cursor = connection.cursor()
-
-
     sql = "SELECT * FROM db.roomcodes WHERE roomcode = %s"
     cursor.execute(sql, (session_id_info))
     row = cursor.fetchone()
-    
+
     if row:
         print("value found")
-        
-        #get current time
-        curr_date = time.strftime('%Y-%m-%d %H:%M:%S')
+
+        # get current time
+        curr_date = time.strftime("%Y-%m-%d %H:%M:%S")
         print(curr_date)
-    
-        #insert initial row
+
+        # insert initial row
         sql = "INSERT INTO db.feedback (roomCode, curr_date, veryUnsatisfied, unsatisfied, neutral, satisfied, verySatisfied) VALUES (%s, %s, 0, 0, 0, 0, 0)"
         data = (session_id_text, curr_date)
         cursor.execute(sql, data)
-        #commit the changes to the DB
+        # commit the changes to the DB
         connection.commit()
-        
-        #get the index number
+
+        # get the index number
         sql = "SELECT sessionID FROM db.feedback WHERE roomCode = %s ORDER BY sessionID DESC LIMIT 1;"
         cursor.execute(sql, session_id_text)
         temp = cursor.fetchone()
         print(temp)
         roomcode = temp[0]
 
-        #raise the next window
+        # raise the next window
         session_id_text = ""
         session_id.set(session_id_text)
         main_frame.tkraise()
     else:
         print("value not found")
-        #if key does not exist
+        popup("ERROR - THIS SESSIONS \n DOES NOT EXIST")
+        # if key does not exist
         connection.close()
+
+
+def popup(msg):
+    popup = tk.Tk()
+    popup.wm_title("!")
+    label = Label(popup, text=msg)
+    label.pack(side="top", fill="x", pady=10)
+    B1 = ttk.Button(popup, text="Okay", command=popup.destroy)
+    B1.pack()
+    popup.mainloop()
 
 
 # backspace button logic
@@ -73,16 +87,25 @@ def backspace_press():
         session_id_text = session_id_text[:-1]
         session_id.set(session_id_text)
     else:
+        # if there is no text do nothing
         pass
+
 
 # logic for when a key is pressed
 def button_press(the_button):
     global session_id_text
-    session_id_text = session_id_text + str(the_button)
-    session_id.set(session_id_text)
+    print(session_id_text)
+    # the code checks the length before input therefore this
+    # logic might not make sense but it caps users to enter code at length of 8
+    if len(session_id_text) < 8:
+        session_id_text = session_id_text + str(the_button)
+        session_id.set(session_id_text)
+    else:
+        pass
+
 
 def RegisterResponseExcellent():
-    sql = ("UPDATE db.feedback SET verySatisfied = verySatisfied + 1  WHERE sessionID = %s;")
+    sql = "UPDATE db.feedback SET verySatisfied = verySatisfied + 1  WHERE sessionID = %s;"
     print(roomcode)
     cursor.execute(sql, roomcode)
     connection.commit()
@@ -90,35 +113,39 @@ def RegisterResponseExcellent():
 
 
 def RegisterResponseGood():
-    sql = ("UPDATE db.feedback SET satisfied = satisfied + 1  WHERE sessionID = %s;")
+    sql = "UPDATE db.feedback SET satisfied = satisfied + 1  WHERE sessionID = %s;"
     cursor.execute(sql, roomcode)
     connection.commit()
     print("Thanks for the feedback")
+
 
 def RegisterResponseOkay():
-    sql = ("UPDATE db.feedback SET neutral = neutral + 1  WHERE sessionID = %s;")
+    sql = "UPDATE db.feedback SET neutral = neutral + 1  WHERE sessionID = %s;"
     cursor.execute(sql, roomcode)
     connection.commit()
     print("Thanks for the feedback")
+
 
 def RegisterResponseBad():
-    sql = ("UPDATE db.feedback SET unsatisfied = unsatisfied + 1  WHERE sessionID = %s;")
+    sql = "UPDATE db.feedback SET unsatisfied = unsatisfied + 1  WHERE sessionID = %s;"
     cursor.execute(sql, roomcode)
     connection.commit()
     print("Thanks for the feedback")
 
+
 def RegisterResponseVeryBad():
-    sql = ("UPDATE db.feedback SET veryUnsatisfied = veryUnsatisfied + 1  WHERE sessionID = %s;")
-    cursor.execute(sql, roomcode)  
+    sql = "UPDATE db.feedback SET veryUnsatisfied = veryUnsatisfied + 1  WHERE sessionID = %s;"
+    cursor.execute(sql, roomcode)
     connection.commit()
     print("Sorry to hear it was bad")
+
 
 def BackToLogin():
     front_frame.tkraise()
 
 
 root = tk.Tk()
-root.attributes('-fullscreen', True)
+root.attributes("-fullscreen", True)
 root.title("Feedback Machine")
 root.config(bg="black")
 
@@ -136,10 +163,14 @@ Grid.columnconfigure(root, 4, weight=1)
 session_id = StringVar()
 
 main_frame = tk.Frame(root, bg="black")
-main_frame.grid(row=0, rowspan=3, column=0, columnspan=5, padx=10, pady=10, sticky="nsew")
+main_frame.grid(
+    row=0, rowspan=3, column=0, columnspan=5, padx=10, pady=10, sticky="nsew"
+)
 
 front_frame = tk.Frame(root, bg="black")
-front_frame.grid(row=0, rowspan=3, column=0, columnspan=5, padx=10, pady=10, sticky="nsew")
+front_frame.grid(
+    row=0, rowspan=3, column=0, columnspan=5, padx=10, pady=10, sticky="nsew"
+)
 
 Grid.rowconfigure(front_frame, 0, weight=1)
 Grid.rowconfigure(front_frame, 1, weight=1)
@@ -262,22 +293,64 @@ label_top = Label(title_frame, bg="black", image=image_hallam_logo, padx=10, pad
 label_top.pack(fill="y", expand=True)
 
 
-button_excellent = tk.Button(left_frame, text="Excellent", bg="green", activebackground="black", image=image_excellent, command=RegisterResponseExcellent)
+button_excellent = tk.Button(
+    left_frame,
+    text="Excellent",
+    bg="green",
+    activebackground="black",
+    image=image_excellent,
+    command=RegisterResponseExcellent,
+)
 button_excellent.pack(fill=tk.BOTH, expand=True)
 
-button_good = tk.Button(left_middle_frame, text="Good", bg="lightgreen", activebackground="black", image=image_good , command=RegisterResponseGood)
+button_good = tk.Button(
+    left_middle_frame,
+    text="Good",
+    bg="lightgreen",
+    activebackground="black",
+    image=image_good,
+    command=RegisterResponseGood,
+)
 button_good.pack(fill=tk.BOTH, expand=True)
 
-button_straight = tk.Button(middle_frame, text="Okay", bg="yellow", activebackground="black", image=image_okay, command=RegisterResponseOkay)
+button_straight = tk.Button(
+    middle_frame,
+    text="Okay",
+    bg="yellow",
+    activebackground="black",
+    image=image_okay,
+    command=RegisterResponseOkay,
+)
 button_straight.pack(fill=tk.BOTH, expand=True)
 
-button_bad = tk.Button(right_middle_frame, text="Bad", bg="orange", activebackground="black", image=image_bad , command=RegisterResponseBad)
+button_bad = tk.Button(
+    right_middle_frame,
+    text="Bad",
+    bg="orange",
+    activebackground="black",
+    image=image_bad,
+    command=RegisterResponseBad,
+)
 button_bad.pack(fill=tk.BOTH, expand=True)
 
-button_very_bad = tk.Button(right_frame, text="Very Bad", bg="red", activebackground="black", image=image_very_bad , command=RegisterResponseVeryBad)
+button_very_bad = tk.Button(
+    right_frame,
+    text="Very Bad",
+    bg="red",
+    activebackground="black",
+    image=image_very_bad,
+    command=RegisterResponseVeryBad,
+)
 button_very_bad.pack(fill=tk.BOTH, expand=True)
 
-button_back = tk.Button(bottom_frame, bg="black", activebackground="black", image=image_back_button, borderwidth=0, command=BackToLogin)
+button_back = tk.Button(
+    bottom_frame,
+    bg="black",
+    activebackground="black",
+    image=image_back_button,
+    borderwidth=0,
+    command=BackToLogin,
+)
 button_back.pack(fill=tk.BOTH, expand=TRUE)
 
 # the textbox for the session ID - this is so broken, needs some more looking into
@@ -288,47 +361,169 @@ session_id_textbox = Label(
     relief="groove",
     font=("Amasis MT Std Black", 42),
     bg="black",
-    fg="white"
+    fg="white",
 )
-session_id_textbox.grid(row=1, rowspan=2, column=1, columnspan=3, padx=10, pady=10, sticky="nsew")
+session_id_textbox.grid(
+    row=1, rowspan=2, column=1, columnspan=3, padx=10, pady=10, sticky="nsew"
+)
 
 # login button - need to replace with some art rather than mess with fonts
-login_button = Button(login_button_frame, image=image_login, bg="black", activebackground="black", border=0, width=8, borderwidth=4, height=4, command=set_id)
+login_button = Button(
+    login_button_frame,
+    image=image_login,
+    bg="black",
+    activebackground="black",
+    border=0,
+    width=8,
+    borderwidth=4,
+    height=4,
+    command=set_id,
+)
 login_button.pack(fill=tk.BOTH, expand=True)
 
 # backspace button
-button_backspace = Button(button_backspace_frame, image=image_backspace, bg="black", activebackground="black", border=0, width=8, borderwidth=4, height=4, command=lambda: backspace_press())
+button_backspace = Button(
+    button_backspace_frame,
+    image=image_backspace,
+    bg="black",
+    activebackground="black",
+    border=0,
+    width=8,
+    borderwidth=4,
+    height=4,
+    command=lambda: backspace_press(),
+)
 button_backspace.pack(fill=tk.BOTH, expand=True)
 
 # number keys
-button_zero = Button(button_zero_frame, image=image_zero, bg="black", activebackground="black", border=0, width=8, height=4, borderwidth=4, command=lambda: button_press("0"))
+button_zero = Button(
+    button_zero_frame,
+    image=image_zero,
+    bg="black",
+    activebackground="black",
+    border=0,
+    width=8,
+    height=4,
+    borderwidth=4,
+    command=lambda: button_press("0"),
+)
 button_zero.pack(fill=tk.BOTH, expand=True)
 
-button_one = Button(button_one_frame, image=image_one, bg="black", activebackground="black", border=0, width=8, height=4, borderwidth=4, command=lambda: button_press("1"))
+button_one = Button(
+    button_one_frame,
+    image=image_one,
+    bg="black",
+    activebackground="black",
+    border=0,
+    width=8,
+    height=4,
+    borderwidth=4,
+    command=lambda: button_press("1"),
+)
 button_one.pack(fill=tk.BOTH, expand=True)
 
-button_two = Button(button_two_frame, image=image_two, bg="black", activebackground="black", border=0, width=8, height=4, borderwidth=4, command=lambda: button_press("2"))
+button_two = Button(
+    button_two_frame,
+    image=image_two,
+    bg="black",
+    activebackground="black",
+    border=0,
+    width=8,
+    height=4,
+    borderwidth=4,
+    command=lambda: button_press("2"),
+)
 button_two.pack(fill=tk.BOTH, expand=True)
 
-button_three = Button(button_three_frame, image=image_three, bg="black", activebackground="black", border=0, width=8, height=4, borderwidth=4, command=lambda: button_press("3"))
+button_three = Button(
+    button_three_frame,
+    image=image_three,
+    bg="black",
+    activebackground="black",
+    border=0,
+    width=8,
+    height=4,
+    borderwidth=4,
+    command=lambda: button_press("3"),
+)
 button_three.pack(fill=tk.BOTH, expand=True)
 
-button_four = Button(button_four_frame, image=image_four, bg="black", activebackground="black", border=0, width=8, height=4, borderwidth=4, command=lambda: button_press("4"))
+button_four = Button(
+    button_four_frame,
+    image=image_four,
+    bg="black",
+    activebackground="black",
+    border=0,
+    width=8,
+    height=4,
+    borderwidth=4,
+    command=lambda: button_press("4"),
+)
 button_four.pack(fill=tk.BOTH, expand=True)
 
-button_five = Button(button_five_frame, image=image_five, bg="black", activebackground="black", border=0, width=8, height=4, borderwidth=4, command=lambda: button_press("5"))
+button_five = Button(
+    button_five_frame,
+    image=image_five,
+    bg="black",
+    activebackground="black",
+    border=0,
+    width=8,
+    height=4,
+    borderwidth=4,
+    command=lambda: button_press("5"),
+)
 button_five.pack(fill=tk.BOTH, expand=True)
 
-button_six = Button(button_six_frame, image=image_six, bg="black", activebackground="black", border=0, width=8, height=4, borderwidth=4, command=lambda: button_press("6"))
+button_six = Button(
+    button_six_frame,
+    image=image_six,
+    bg="black",
+    activebackground="black",
+    border=0,
+    width=8,
+    height=4,
+    borderwidth=4,
+    command=lambda: button_press("6"),
+)
 button_six.pack(fill=tk.BOTH, expand=True)
 
-button_seven = Button(button_seven_frame,image=image_seven, bg="black", activebackground="black", border=0, width=8, height=4, borderwidth=4, command=lambda: button_press("7"))
+button_seven = Button(
+    button_seven_frame,
+    image=image_seven,
+    bg="black",
+    activebackground="black",
+    border=0,
+    width=8,
+    height=4,
+    borderwidth=4,
+    command=lambda: button_press("7"),
+)
 button_seven.pack(fill=tk.BOTH, expand=True)
 
-button_eight = Button(button_eight_frame, image=image_eight, bg="black", activebackground="black", border=0, width=8, height=4, borderwidth=4, command=lambda: button_press("8"))
+button_eight = Button(
+    button_eight_frame,
+    image=image_eight,
+    bg="black",
+    activebackground="black",
+    border=0,
+    width=8,
+    height=4,
+    borderwidth=4,
+    command=lambda: button_press("8"),
+)
 button_eight.pack(fill=tk.BOTH, expand=True)
 
-button_nine = Button(button_nine_frame, image=image_nine, bg="black", activebackground="black", border=0, width=8, height=4, borderwidth=4, command=lambda: button_press("9"))
+button_nine = Button(
+    button_nine_frame,
+    image=image_nine,
+    bg="black",
+    activebackground="black",
+    border=0,
+    width=8,
+    height=4,
+    borderwidth=4,
+    command=lambda: button_press("9"),
+)
 button_nine.pack(fill=tk.BOTH, expand=True)
 
 root.mainloop()
