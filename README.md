@@ -10,5 +10,5 @@ Core Requirements:
 - [x] Connect to DB
 - [x] Take login information from a database
 - [x] Create a new row whenever a key is entered
-- [ ] Add a visualisation on demand capability (pandas, plotly, etc.)
+- [x] Add a visualisation on demand capability (pandas, plotly, etc.)
 - [ ] Fix vulnerabilities
